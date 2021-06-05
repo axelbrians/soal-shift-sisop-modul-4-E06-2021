@@ -14,13 +14,18 @@
 #include <sys/xattr.h>
 #include <sys/wait.h>
 #include <pthread.h>
+
+
+const char *log_path = "/home/axel/SinSeiFS.log";
+const char *dir_path = "/home/axel/Downloads";
+
 void writeI(const char *text, const char* path){
 	char* info = "INFO";
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 	char log[1000];
 	sprintf(log, "[%s]::[%02d][%02d][%02d]-[%02d]:[%02d]:[%02d]::[%s]::[%s]", info, tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec, text, path);
-	FILE *out = fopen("/home/kuchuz/SinSeiFS.log", "a");
+	FILE *out = fopen(log_path, "a");
 	fprintf(out, "%s\n", log);
 	fclose(out);
 }
@@ -30,7 +35,7 @@ void writeW(const char *text, const char* path){
 	struct tm tm = *localtime(&t);
 	char log[1000];
 	sprintf(log, "[%s]::[%02d][%02d][%02d]-[%02d]:[%02d]:[%02d]::[%s]::[%s]", info, tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec, text, path);
-	FILE *out = fopen("/home/kuchuz/SinSeiFS.log", "a");
+	FILE *out = fopen(log_path, "a");
 	fprintf(out, "%s\n", log);
 	fclose(out);
 }
@@ -38,11 +43,13 @@ void writeW(const char *text, const char* path){
 static int xmp_getattr(const char *path, struct stat *stbuf){
 	writeI("LS", path);
 	int res;
+
 	res = lstat(path, stbuf);
 	if (res == -1)
 		return -errno;
 	return 0;
 }
+
 static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi){
 	writeI("CD", path);
 	DIR *dp;
